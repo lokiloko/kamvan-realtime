@@ -42,11 +42,17 @@
 export default {
   props: ['tasks'],
   methods: {
-    backlog (key) {
-      this.$emit('backlog', key)
+    backlog (key, tab) {
+      var dataEmit = {
+        key, tab: 1
+      }
+      this.$emit('backlog', dataEmit)
     },
     doing (key) {
-      this.$emit('doing', key)
+      var dataEmit = {
+        key, tab: 3
+      }
+      this.$emit('doing', dataEmit)
     }
   }
 }

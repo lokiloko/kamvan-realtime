@@ -18,16 +18,16 @@
   </md-sidenav>
   <md-divider />
   <md-tabs md-fixed>
-    <md-tab md-label="Back Log" md-icon="work">
+    <md-tab md-label="Back Log" md-icon="work" :md-active="activeTab === 1">
       <BackLog :tasks="tasks[1]" @todo="statusTodo" @remove="removeTask"/>
     </md-tab>
-    <md-tab md-label="To Do" md-icon="directions_run">
+    <md-tab md-label="To Do" md-icon="directions_run" :md-active="activeTab === 2">
       <ToDo :tasks="tasks[1]" @backlog="statusBacklog" @doing="statusDoing"/>
     </md-tab>
-    <md-tab md-label="Doing" md-icon="accessible">
+    <md-tab md-label="Doing" md-icon="accessible" :md-active="activeTab === 3">
       <Doing :tasks="tasks[1]" @todo="statusTodo" @done="statusDone"/>
     </md-tab>
-    <md-tab md-label="Done" md-icon="accessibility">
+    <md-tab md-label="Done" md-icon="accessibility" :md-active="activeTab === 4">
       <Done :tasks="tasks[1]" @doing="statusDoing" @remove="removeTask"/>
     </md-tab>
   </md-tabs>
@@ -45,6 +45,11 @@ import db from '@/firebase/firebase'
 
 export default {
   props: ['kanban_name'],
+  data () {
+    return {
+      activeTab: 1
+    }
+  },
   methods: {
     toggleLeftSidenav () {
       this.$refs.leftSidenav.toggle()
@@ -53,24 +58,27 @@ export default {
       this.$refs.rightSidenav.toggle()
     },
     openFormDialog () {
-      console.log(this.tasks[0]['.value'])
       this.$refs['dialogFormTasks'].open()
     },
-    statusBacklog (key) {
-      var path = '/' + this.kanban_name + '/tasks/' + key + '/status'
+    statusBacklog (dataEmit) {
+      var path = '/' + this.kanban_name + '/tasks/' + dataEmit.key + '/status'
       db.ref(path).set('backlog')
+      this.activeTab = dataEmit.tab
     },
-    statusTodo (key) {
-      var path = '/' + this.kanban_name + '/tasks/' + key + '/status'
+    statusTodo (dataEmit) {
+      var path = '/' + this.kanban_name + '/tasks/' + dataEmit.key + '/status'
       db.ref(path).set('todo')
+      this.activeTab = dataEmit.tab
     },
-    statusDoing (key) {
-      var path = '/' + this.kanban_name + '/tasks/' + key + '/status'
+    statusDoing (dataEmit) {
+      var path = '/' + this.kanban_name + '/tasks/' + dataEmit.key + '/status'
       db.ref(path).set('doing')
+      this.activeTab = dataEmit.tab
     },
-    statusDone (key) {
-      var path = '/' + this.kanban_name + '/tasks/' + key + '/status'
+    statusDone (dataEmit) {
+      var path = '/' + this.kanban_name + '/tasks/' + dataEmit.key + '/status'
       db.ref(path).set('done')
+      this.activeTab = dataEmit.tab
     },
     addNewTask (data) {
       data.status = 'backlog'
@@ -98,6 +106,11 @@ export default {
     FormTasks,
     Doing,
     Done
+  },
+  created () {
+    return {
+
+    }
   }
 }
 </script>

@@ -43,10 +43,16 @@ export default {
   props: ['tasks'],
   methods: {
     todo (key) {
-      this.$emit('todo', key)
+      var dataEmit = {
+        key, tab: 2
+      }
+      this.$emit('todo', dataEmit)
     },
     done (key) {
-      this.$emit('done', key)
+      var dataEmit = {
+        key, tab: 4
+      }
+      this.$emit('done', dataEmit)
     }
   }
 }

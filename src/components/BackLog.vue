@@ -45,8 +45,11 @@ export default {
     remove (key) {
       this.$emit('remove', key)
     },
-    todo (key) {
-      this.$emit('todo', key)
+    todo (key, tab) {
+      var dataEmit = {
+        key, tab: 2
+      }
+      this.$emit('todo', dataEmit)
     }
   }
 }

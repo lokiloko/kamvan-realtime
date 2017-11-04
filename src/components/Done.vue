@@ -43,7 +43,10 @@ export default {
   props: ['tasks'],
   methods: {
     doing (key) {
-      this.$emit('doing', key)
+      var dataEmit = {
+        key, tab: 3
+      }
+      this.$emit('doing', dataEmit)
     },
     remove (key) {
       this.$emit('remove', key)

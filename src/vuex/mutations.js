@@ -1,6 +1,6 @@
 const mutations = {
   increment (state, payload) {
-    state.count = payload
+    state.tasks = payload
   }
 }
 

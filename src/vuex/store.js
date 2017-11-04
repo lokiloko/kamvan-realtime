@@ -6,8 +6,7 @@ import actions from './actions'
 Vue.use(Vuex)
 
 const initialState = {
-  count: 0,
-  articles: []
+  tasks: []
 }
 
 export default new Vuex.Store({

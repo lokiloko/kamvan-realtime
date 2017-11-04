@@ -3,7 +3,7 @@
   <md-button class="md-primary md-raised" @click="openDialog('dialogKanbanName')">Go to Kanban</md-button>
   <md-dialog ref="dialogKanbanName">
     <form @submit.stop.prevent="go">
-      <md-dialog-title>Create new Kanban</md-dialog-title>
+      <md-dialog-title>Go to Your Kanban</md-dialog-title>
       <md-dialog-content>
         <md-input-container>
           <label>Kanban Name</label>
@@ -12,7 +12,7 @@
       </md-dialog-content>
       <md-dialog-actions>
         <md-button class="md-primary" @click="openDialog('dialogKanbanCreate'); closeDialog('dialogKanbanName')">Create New</md-button>
-        <md-button class="md-primary">Go</md-button>
+        <md-button class="md-primary" @click="go">Go</md-button>
       </md-dialog-actions>
     </form>
   </md-dialog>
@@ -35,27 +35,28 @@
       </md-dialog-actions>
       </form>
   </md-dialog>
+  <md-dialog-alert
+    :md-content="alert.content"
+    :md-ok-text="alert.ok"
+    ref="dialog3">
+  </md-dialog-alert>
   <!-- <md-button class="md-primary md-raised" @click="openDialog('dialogKanbanName')">Prompt</md-button> -->
 </div>
 </template>
 
 <script>
 import db from '@/firebase/firebase'
+import crypto from 'crypto'
+
 export default {
   data: () => {
     return {
-      prompt: {
-        title: 'What\'s your kanban name?',
-        ok: 'Done',
-        cancel: 'Cancel',
-        id: 'name',
-        name: 'name',
-        placeholder: 'Type your kanban name...',
-        maxlength: 30,
-        value: ''
-      },
       kanbanName: '',
-      kanbanPass: ''
+      kanbanPass: '',
+      alert: {
+        content: 'Your task has been added!',
+        ok: 'Cool!'
+      }
     }
   },
   methods: {
@@ -67,11 +68,35 @@ export default {
     },
     submit () {
       this.closeDialog('dialogKanbanCreate')
-      console.log(this.kanbanName)
-      console.log(this.kanbanPass)
+      const hash = crypto.createHmac('sha256', process.env.SECRET_KEY)
+                   .update(this.kanbanPass)
+                   .digest('hex')
+      db.ref('/' + this.kanbanName).set({
+        secret: hash,
+        backlog: [],
+        todo: [],
+        doing: [],
+        done: []
+      }).then((data) => {
+        this.$router.push('/' + this.kanbanName)
+        this.kanbanName = ''
+      }).catch((err) => {
+        console.error(err)
+      })
     },
     go () {
-      this.closeDialog('dialogKanbanName')
+      if (this.kanban[this.kanbanName]) {
+        this.alert.content = 'Here is your Kanban'
+        this.alert.ok = 'Yeah!'
+        this.$refs['dialog3'].open()
+        this.closeDialog('dialogKanbanName')
+        this.$router.push(this.kanbanName)
+        this.kanbanName = ''
+      } else {
+        this.alert.content = 'Your Kanban is not Found'
+        this.alert.ok = 'What!?'
+        this.$refs['dialog3'].open()
+      }
     }
   },
   firebase: {

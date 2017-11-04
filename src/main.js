@@ -13,6 +13,13 @@ Vue.config.productionTip = false
 Vue.use(VueFire)
 Vue.use(VueMaterial)
 
+Vue.material.registerTheme('default', {
+  primary: 'blue',
+  accent: 'pink',
+  warn: 'red',
+  background: 'white'
+})
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
